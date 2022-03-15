@@ -17,6 +17,9 @@
     "doctrine/common": {
         "version": "3.2.2"
     },
+    "doctrine/data-fixtures": {
+        "version": "1.5.2"
+    },
     "doctrine/dbal": {
         "version": "3.3.3"
     },
@@ -35,6 +38,18 @@
             "./config/packages/doctrine.yaml",
             "./src/Entity/.gitignore",
             "./src/Repository/.gitignore"
+        ]
+    },
+    "doctrine/doctrine-fixtures-bundle": {
+        "version": "3.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "1f5514cfa15b947298df4d771e694e578d4c204d"
+        },
+        "files": [
+            "./src/DataFixtures/AppFixtures.php"
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
@@ -83,11 +98,32 @@
             "ref": "b131e6cbfe1b898a508987851963fff485986285"
         }
     },
+    "fakerphp/faker": {
+        "version": "v1.19.0"
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.7"
     },
+    "friendsofsymfony/ckeditor-bundle": {
+        "version": "2.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.0",
+            "ref": "f5ad42002183a6881962683e6d84bbb25cdfce5d"
+        },
+        "files": [
+            "./config/packages/fos_ckeditor.yaml"
+        ]
+    },
+    "jms/metadata": {
+        "version": "2.6.1"
+    },
     "laminas/laminas-code": {
         "version": "4.5.1"
+    },
+    "monolog/monolog": {
+        "version": "2.4.0"
     },
     "nikic/php-parser": {
         "version": "v4.13.2"
@@ -128,6 +164,18 @@
             "./bin/console"
         ]
     },
+    "symfony/debug-bundle": {
+        "version": "6.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.3",
+            "ref": "5aa8aa48234c8eb6dbdd7b3cd5d791485d2cec4b"
+        },
+        "files": [
+            "./config/packages/debug.yaml"
+        ]
+    },
     "symfony/dependency-injection": {
         "version": "v6.0.6"
     },
@@ -148,6 +196,9 @@
     },
     "symfony/event-dispatcher-contracts": {
         "version": "v3.0.0"
+    },
+    "symfony/expression-language": {
+        "version": "v6.0.3"
     },
     "symfony/filesystem": {
         "version": "v6.0.6"
@@ -207,6 +258,24 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/mime": {
+        "version": "v6.0.3"
+    },
+    "symfony/monolog-bridge": {
+        "version": "v6.0.3"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.7",
+            "ref": "213676c4ec929f046dfde5ea8e97625b81bc0578"
+        },
+        "files": [
+            "./config/packages/monolog.yaml"
+        ]
+    },
     "symfony/options-resolver": {
         "version": "v6.0.3"
     },
@@ -217,6 +286,9 @@
         "version": "v1.25.0"
     },
     "symfony/polyfill-intl-icu": {
+        "version": "v1.25.0"
+    },
+    "symfony/polyfill-intl-idn": {
         "version": "v1.25.0"
     },
     "symfony/polyfill-intl-normalizer": {
@@ -339,10 +411,35 @@
     "symfony/var-exporter": {
         "version": "v6.0.6"
     },
+    "symfony/web-profiler-bundle": {
+        "version": "6.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.3",
+            "ref": "24bbc3d84ef2f427f82104f766014e799eefcc3e"
+        },
+        "files": [
+            "./config/packages/web_profiler.yaml",
+            "./config/routes/web_profiler.yaml"
+        ]
+    },
     "symfony/yaml": {
         "version": "v6.0.3"
     },
     "twig/twig": {
         "version": "v3.3.8"
+    },
+    "vich/uploader-bundle": {
+        "version": "1.19",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.7",
+            "ref": "c4f5755b37fb65b9c6a3cbdae91205c15a137ed4"
+        },
+        "files": [
+            "./config/packages/vich_uploader.yaml"
+        ]
     }
 }
