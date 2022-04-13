@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Eco IT devenez formateur{% endblock %}
+
+{% block body %}
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col-11 col-md-8 col-lg-6 mx-auto mt-4">
+                <h1 class="text-center my-4 h2">Rejoignez-nous</h1>
+                <p class="my-5 px-4">
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat exercitationem quidem atque incidunt dolor quibusdam voluptatibus neque aliquid. Hic ratione dolore quasi qui aspernatur minima cum iure vero unde soluta perspiciatis officiis, aliquid odit nobis recusandae minus quisquam, nihil dolor rem, totam nemo. Dolorum, sunt libero dignissimos repellat, minus, accusamus distinctio maxime exercitationem consequatur esse nesciunt. Pariatur, excepturi quo iste perferendis, neque atque explicabo aut, quis enim ipsa maiores molestias.
+                </p>
+                {{ form_start(registrationForm) }}
+                    {{ form_row(registrationForm.user.email) }}
+                    {{ form_row(registrationForm.user.plainPassword) }}
+                    {{ form_row(registrationForm.lastname) }}
+                    {{ form_row(registrationForm.firstname) }}
+                    {{ form_row(registrationForm.description,{'attr': {'class': 'description'}} ) }}
+                    {{ form_row(registrationForm.imageFile ) }}
+                    <div class="row mt-5">
+                        <div class="col d-flex justify-content-center align-items-center">
+                            {{ form_row(registrationForm.save) }}
+                        </div>
+                        
+                    </div>
+                    {{ form_end(registrationForm) }}
+
+            </div>
+        </div>
+    </div>
+</main>
+{# {{ form_row(registrationForm.save) }} #}
+{# {{ form_row(registrationForm.lastname) }} #}
+{# {{ form_row(registrationForm.email) }} #}
+{# {{ form_row(registrationForm.plainPassword, {
+label: 'Mot de passe'
+}) }} #}
+
+{{ form_end(registrationForm) }}
+{% endblock %}

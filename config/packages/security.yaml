@@ -42,6 +42,10 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
+    access_control:
+        - { path: ^/efconnect, role: ROLE_TEACHER  }
+        - { path: ^/elfinder, role: ROLE_TEACHER  }
+
 when@test:
     security:
         password_hashers:

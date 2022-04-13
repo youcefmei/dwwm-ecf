@@ -7,7 +7,11 @@ use App\Entity\Admin;
 use App\Entity\Student;
 use App\Entity\Teacher;
 use App\Form\RegistrationFormType;
+use App\Repository\AdminRepository;
+use App\Form\RegistrationAdminFormType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\RegistrationStudentFormType;
+use App\Form\RegistrationTeacherFormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,102 +21,102 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/student/register', name: 'student.register')]
-    public function student_register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    /**
+     * Student register route
+     *
+     * @param Request $request
+     * @param UserPasswordHasherInterface $userPasswordHasher
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    #[Route('/etudiant/enregistrement', name: 'student.register')]
+    public function studentRegister(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $student = new Student();
+        $form = $this->createForm(RegistrationStudentFormType::class, $student);
         $form->handleRequest($request);
-        // dd($user);
+        // dd($form);
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            // dd($user);
-            $user->setPassword(
-            $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
-            $user->setRoles(["ROLE_STUDENT"]);
-            $entityManager->persist($user);
-            $student = new Student();
-            $student->setUser($user);
+            $student->getUser()->setPassword($userPasswordHasher->hashPassword($student->getUser(), $form->get('user')->get('plainPassword')->getData()));
+            $student->getUser()->setRoles(["ROLE_STUDENT"]);
             $entityManager->persist($student);
             $entityManager->flush();
-            // do anything else you need here, like send an email
-
-            return $this->redirectToRoute('admin');
         }
-
-        return $this->render('registration/register.html.twig', [
+        return $this->render('registration/register_student.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
     }
 
-    #[Route('/teacher/register', name: 'teacher.register')]
-    public function teacher_register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+
+    /**
+     * Teacher register route
+     *
+     * @param Request $request
+     * @param UserPasswordHasherInterface $userPasswordHasher
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    #[Route('/formateur/enregistrement', name: 'teacher.register')]
+    public function teacherRegister(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $teacher = new Teacher();
+        $form = $this->createForm(RegistrationTeacherFormType::class, $teacher);
         $form->handleRequest($request);
-        // dd($user);
         if ($form->isSubmitted() && $form->isValid()) {
+
             // encode the plain password
-            // dd($user);
-            $user->setPassword(
-            $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
+            $teacher->getUser()->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $teacher->getUser(),
+                    $form->get('user')->get('plainPassword')->getData()
                 )
             );
-            $user->setRoles(["ROLE_TEACHER"]);
-            $entityManager->persist($user);
-            $teacher = new Teacher();
-            $teacher->setUser($user);
+            $teacher->getUser()->setRoles(["ROLE_TEACHER_PENDING"]);
             $entityManager->persist($teacher);
             $entityManager->flush();
+            $this->addFlash("success", 'Votre demande a bien été prise en compte .Nous vous remercions de l\'intérêt que vous portez à notre société', 'Nous allons étudier votre dossier puis nous vous recontacterons par mail.');
             // do anything else you need here, like send an email
-
             return $this->redirectToRoute('admin');
         }
-
-        return $this->render('registration/register.html.twig', [
+        // dd($form->createView());
+        return $this->render('registration/register_teacher.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
     }
 
-
-    #[Route('/admin/register', name: 'admin.register')]
-    public function admin_register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    /**
+     * Admin register route
+     *
+     * @param Request $request
+     * @param UserPasswordHasherInterface $userPasswordHasher
+     * @param EntityManagerInterface $entityManager
+     * @param AdminRepository $adminRepo
+     * @return Response
+     */
+    #[Route('/admin/enregistrement', name: 'admin.register')]
+    public function adminRegister(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, AdminRepository $adminRepo): Response
     {
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $admin = new Admin();
+        $form = $this->createForm(RegistrationAdminFormType::class, $admin);
         $form->handleRequest($request);
-        // dd($user);
+
+        // Only one admin is allow to register 
+        if (!empty($adminRepo->findAll())) {
+            return $this->redirectToRoute("home");
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
-            // dd($user);
-            $user->setPassword(
-            $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
-            $user->setRoles(["ROLE_ADMIN"]);
-            $entityManager->persist($user);
-            $admin = new Admin();
-            $admin->setUser($user);
+            $admin->getUser()->setEmail($form->get('user')->get('email')->getData());
+            $admin->getUser()->setPassword($userPasswordHasher->hashPassword($admin->getUser(), $form->get('user')->get('plainPassword')->getData()));
+            $admin->getUser()->setRoles(["ROLE_ADMIN"]);
             $entityManager->persist($admin);
             $entityManager->flush();
-            // do anything else you need here, like send an email
-
-            return $this->redirectToRoute('admin');
+            return $this->redirectToRoute("admin");
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('registration/register_admin.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
+
     }
-
-
 }

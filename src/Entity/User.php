@@ -5,17 +5,16 @@ namespace App\Entity;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
 // #[ORM\InheritanceType("JOINED")]
-// #[ORM\DiscriminatorColumn(name:"type", type:"string")]
+// #[ORM\DiscriminatorColumn(name:"role", type:"string")]
 // #[ORM\DiscriminatorMap(["teacher" => Teacher::class, "student" => Student::class, "admin" => Admin::class])]
-#[UniqueEntity('email')]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(fields: 'email', message: 'Ce compte existe dèja!')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -31,11 +30,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
+    private $plainPassword;
+
     
     #[ORM\Column(type: 'string')]    
     private string  $password;
     
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: 'datetime_immutable' )]
     #[Assert\NotBlank]
     private ?DateTimeImmutable $createdAt;
 
@@ -57,6 +58,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->id;
     }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
 
     public function getEmail(): ?string
     {
@@ -88,7 +101,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
@@ -142,7 +154,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($student->getUser() !== $this) {
             $student->setUser($this);
         }
-
         $this->student = $student;
 
         return $this;
@@ -180,5 +191,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->admin = $admin;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getEmail();
     }
 }

@@ -2,22 +2,42 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Quiz;
+use App\Entity\User;
+use App\Entity\Answer;
+use App\Entity\Course;
+use App\Entity\Lesson;
+use App\Entity\Section;
 use App\Entity\Student;
+
 use App\Entity\Teacher;
+use App\Entity\Question;
+use Doctrine\ORM\EntityManager;
+use App\Repository\TeacherRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 class DashboardController extends AbstractDashboardController
 {
+
+
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        // return parent::index();
+        if (!($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_TEACHER'))){
+            // dd($this);
+            return $this->redirectToRoute('home');
+        }
+        // dd($this->getUser()->getTeacher());
+        // $controller = $this->isGranted('ROLE_ADMIN') ? AdminCrudController::class : ArticleCrudController::class;
         return $this->render("admin/dashboard.html.twig");
+
+        // return parent::index();
 
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
@@ -39,13 +59,51 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Ecoweb');
+            ->setTitle('Eco IT');
     }
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkToCrud('Teacher', 'fas fa-list', Student::class);
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
+        if ($this->isGranted("ROLE_ADMIN")){
+            yield MenuItem::linkToCrud('Formateurs', 'fas fa-list', Teacher::class);
+        }
+        else if ($this->isGranted("ROLE_TEACHER")){            
+            
+            yield MenuItem::subMenu('Formations', 'fas fa-school')->setSubItems([
+                MenuItem::linkToCrud('Toutes mes formations', 'fas fa-list', Course::class),
+                MenuItem::linkToCrud('Ajouter', 'fas fa-plus', Course::class)->setAction(Crud::PAGE_NEW)
+            ]);
+
+            yield MenuItem::subMenu('Sections', 'fas fa-heading')->setSubItems([
+                MenuItem::linkToCrud('Toutes mes sections', 'fas fa-list', Section::class),
+                MenuItem::linkToCrud('Ajouter', 'fas fa-plus', Section::class)->setAction(Crud::PAGE_NEW),
+                MenuItem::linkToCrud('Ajouter un Quiz', 'fas fa-plus', Quiz::class)->setAction(Crud::PAGE_NEW)
+            ]);
+
+
+            yield MenuItem::subMenu('Leçons', 'fas fa-graduation-cap')->setSubItems([
+                MenuItem::linkToCrud('Toutes mes leçons', 'fas fa-list', Lesson::class),
+                MenuItem::linkToCrud('Ajouter', 'fas fa-plus', Lesson::class)->setAction(Crud::PAGE_NEW)
+            ]);
+            yield MenuItem::section("");
+            yield MenuItem::subMenu('Quiz', 'fas fa-chess')->setSubItems([
+                MenuItem::linkToCrud('Tous mes quiz', 'fas fa-list', Quiz::class),
+                MenuItem::linkToCrud('Ajouter', 'fas fa-plus', Quiz::class)->setAction(Crud::PAGE_NEW)
+            ]);
+
+            yield MenuItem::subMenu('Questions', 'fas fa-question')->setSubItems([
+                MenuItem::linkToCrud('Toutes mes questions', 'fas fa-list', Question::class),
+                MenuItem::linkToCrud('Ajouter', 'fas fa-plus', Question::class)->setAction(Crud::PAGE_NEW)
+            ]);
+
+            yield MenuItem::subMenu('Réponses', 'fas fa-sun')->setSubItems([
+                MenuItem::linkToCrud('Toutes mes réponses', 'fas fa-list', Answer::class),
+                MenuItem::linkToCrud('Ajouter', 'fas fa-plus', Answer::class)->setAction(Crud::PAGE_NEW)
+            ]);
+
+                    
+            
+            
+        }
     }
 }

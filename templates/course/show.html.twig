@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Eco IT | Formations{% endblock %}
+
+{% block body %}
+<main>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="fs-2 my-3 my-lg-5">{{course.title}}</h1>
+                <img src="/images/courses/{{course.image}}" class="text-center w-50 card-img-bottom " alt="...">
+            </div>
+            <div class="col-12 col-lg-8 mx-auto d-flex justify-content-center align-items-center ">
+                {% if is_granted("ROLE_STUDENT") %}
+                    
+                    <a class="btn btn-info mx-auto mt-lg-4 mt-3 border-3 px-lg-4 py-lg-2 px-2 py-1 border-dark text-white"
+                        href="{{path('course.enroll',{'slug' : course.slug})}}">{% if course.id not in coursesOwnIds %}S'inscrire {% else %}continuer{% endif %}</a>
+                    {# {% else %}
+                    <a class="btn btn-info mx-auto mt-lg-4 mt-3 border-3 px-lg-4 py-lg-2 px-2 py-1 border-dark text-white"
+                    href="{{path('course.enroll',{'slug' : course.slug})}}">Continuer </a>#}
+                {% endif %} 
+                
+
+            </div>
+            <div class="col-12 col-lg-8 mx-auto">
+                <h2 class="fs-4 border-bottom-0 mt-lg-5 mt-3 text-decoration-underline">Description</h2>
+                {{course.description | raw}}
+            </div>
+            <div class="col-12 col-lg-8 mx-auto mt-lg-4 mt-3">
+                <h2 class="fs-4 border-bottom-0 mb-3 text-decoration-underline">Plan de la formation</h2>
+            </div>
+            <div class="col-12 col-lg-8 mx-auto mb-1 ">
+                {% for section in course.sections %}
+                {% if section.lessons | length >0 %}
+                <div class="col-12">
+                    <div class="">
+
+                        <span class="ps-2 fs-2"></span>{{section.title |
+                        capitalize}}tttttttttttttttttttttttggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggtttttttttttttttttttttttttttttttttttttttttttttttttttttttuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+
+                    </div>
+                    {# <a href="{{section.slug}}">{{section.title}}</a> #}
+
+                    <div class="col-11 ms-auto">
+                        {% for lesson in section.lessons %}
+                        <div class="">
+
+                            <span class="pe-2">&sharp;</span>{{lesson.title}}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    </dipv>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+</main>
+{% endblock %}

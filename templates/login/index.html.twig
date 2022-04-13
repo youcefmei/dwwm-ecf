@@ -1,22 +1,64 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello LoginController!{% endblock %}
+{% block title %}Eco IT Identification{% endblock %}
 
 {% block body %}
-    {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col-11 col-md-8 col-lg-6 mx-auto mt-4">
+                <h1 class="text-center my-5 h2">Se connecter</h1>
+                {% if error %}
+                    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+                <form action="{{ path('login') }}" method="post">
+                    <div class="mb-3">
+                        <label for="username" class"form-label required">Email:</label>
+                        <input type="email" placeholder="Votre e-mail" id="username" name="_username"
+                            value="{{ last_username }}" class="form-control mt-2" required="required" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label required">Password:</label>
+                        <input type="password" id="password" name="_password" class="form-control"
+                            required="required" />
+                        <input type="hidden" name="_target_path" value="/login" />
+                    </div>
+                    <div class="mb-3">
+                    {% if is_teacher_pending %}
+                        <div class="modal d-block" tabindex="-1">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title">Statut de la demande</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>Votre demande a bien été prise en compte.Nous étudions votre dossier, nous vous recontacterons prochainement..</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{path('logout')}}">Fermer</a>
+                                  {# <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button> #}
+                                  {# <button type="button" class="btn btn-primary">Save changes</button> #}
+                                </div>
+                              </div>
+                            </div>
+                        </div>
 
-    <form action="{{ path('login') }}" method="post">
-        <label for="username">Email:</label>
-        <input type="email" id="username" name="_username" value="{{ last_username }}"/>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="_password"/>
+                        {# <div class="flash-notice mt-5">
+                            Votre demande a bien été prise en compte.Nous étudions votre dossier, nous vous
+                            recontacterons prochainement.
+                        </div> #}
+                    {% endif %}
+                    </div>
+                    {# If you want to control the URL the user is redirected to on success#}
+                    <div class="mb-3 text-center">
 
-        {# If you want to control the URL the user is redirected to on success
-        <input type="hidden" name="_target_path" value="/account"/> #}
-
-        <button type="submit">login</button>
-    </form>
+                        <button type="submit" class="btn btn-primary mx-auto mt-4">S'identifier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
 {% endblock %}

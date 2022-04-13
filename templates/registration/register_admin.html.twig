@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Eco IT inscription{% endblock %}
+
+{% block body %}
+<main>
+<h1 class="text-center">Inscription</h1>
+{{ form_start(registrationForm) }}
+    {{ form_row(registrationForm.lastname) }}
+    {{ form_row(registrationForm.firstname) }}
+    {{ form_row(registrationForm.user.email) }}
+    {{ form_row(registrationForm.user.plainPassword) }}
+    <div class="row">
+        <div class="col d-flex justify-content-center align-items-center">
+            {{ form_row(registrationForm.save) }}
+        </div>
+        
+    </div>
+    {{ form_end(registrationForm) }}
+</main>
+{{ form_end(registrationForm) }}
+{% endblock %}

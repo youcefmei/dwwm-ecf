@@ -2,4 +2,58 @@
 
 twig:
     form_themes:
-        - '@FOSCKEditor/Form/ckeditor_widget.html.twig'
+        - "@FOSCKEditor/Form/ckeditor_widget.html.twig"
+
+# fos_ck_editor:
+#     configs:
+#         basic_conf:
+#             toolbar: full
+#             filebrowserBrowseRoute: elfinder
+#             filebrowserBrowseRouteParameters: []
+#     filebrowsers:
+#         - VideoBrowse
+#         - VideoUpload
+
+
+fos_ck_editor:
+    default_config: default
+    configs:
+        default:
+            language: fr
+            # toolbar: full
+            filebrowserBrowseRoute: elfinder
+            filebrowserBrowseRouteParameters: []
+            # extraPlugins: "codesnippet,youtube,snippet,pbckcode,layoutmanager"
+            extraPlugins: "codesnippet,youtube,pbckcode,uicolor,filebrowser,uploadimage"
+            # extraPlugins: "youtube"
+            codeSnippet_theme : 'monokai_sublime'
+        video:
+            language: fr
+            # toolbar: full
+            filebrowserBrowseRoute: elfinder
+            filebrowserBrowseRouteParameters: []
+            # extraPlugins: "codesnippet,youtube,snippet,pbckcode,layoutmanager"
+            extraPlugins: "youtubfilebrowser,uploadimage"
+            toolbar:
+                - { name: "styles", items: ['Table', '-', 'Styles', 'Format','Font','FontSize', '-', 'TextColor', 'BGColor', 'Source'] }
+            # extraPlugins: "youtube"
+            # codeSnippet_theme : 'monokai_sublime'
+    plugins:
+        codesnippet:
+            path:     "ckeditor/plugins/codesnippet/"
+            filename: "plugin.js"
+        youtube:
+            path:     "ckeditor/plugins/youtube/"
+            filename: "plugin.js"
+        pbckcode:
+            path:     "ckeditor/plugins/pbckcode/"
+            filename: "plugin.js"
+        uicolor:
+            path:     "ckeditor/plugins/uicolor/"
+            filename: "plugin.js"
+        # layoutmanager:
+        #     path:     "ckeditor/plugins/layoutmanager/"
+        #     filename: "plugin.js"
+    filebrowsers:
+        - VideoBrowse
+        - VideoUpload
