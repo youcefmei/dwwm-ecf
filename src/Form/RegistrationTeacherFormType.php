@@ -55,7 +55,7 @@ class RegistrationTeacherFormType extends AbstractType
             ->add("user", RegistrationFormType::class, ['label' => ""])
             ->add('save', SubmitType::class, [
                 'label' => "S'inscrire",
-                "attr"=>["class"=>"btn-primary btn"]
+                "attr"=>["class"=>"btn text-white"]
                 
             ]);
     }

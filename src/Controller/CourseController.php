@@ -122,7 +122,7 @@ class CourseController extends AbstractController
         ]);
     }
 
-    /** Shows courses created by a trainer
+    /** Shows courses created by a teacher
      * 
      */
     #[Route('/formations/formateur/{id<\d+>}', name: 'courses.teacher')]
@@ -144,6 +144,7 @@ class CourseController extends AbstractController
                     'offset'=>$offset,
                     'limit'=>$limit,
                     'pages'=> $pages,
+                    'allow'=>true,
                     'personId'=>$teacher->getId()
                 ]);
             }
@@ -155,6 +156,7 @@ class CourseController extends AbstractController
                     'offset'=>$offset,
                     'limit'=>$limit,
                     'pages'=> $pages,
+                    'allow'=>true,
                     'personId'=>$teacher->getId()
                 ]);
             }

@@ -1,25 +1,18 @@
 {% set current_path = app.request.get('_route') %}
-<div class="container mt-5 px-5" id="courses">
+<div class="container mt-5 px-lg-5 px-3 " id="courses">
     <div class="row">
+        {% block card %}
         {% for course in courses %}
-        <div class="col-lg-4 d-flex align-items-stretch">
-            <div class="card">
-                <img src="/images/courses/{{course.image}}" class="card-img-bottom" alt="...">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{course.title}}</h5>
-                    <div class="card-text">{{course.description |raw}}</div>
-                    <a href="{{path('course.show',{slug:course.slug})}}" class="btn btn-primary w-50">Voir</a>
-                </div>
-            </div>
-        </div>
+        {% include "course/_card.html.twig" %}
         {% endfor %}
+        {% endblock %}
     </div>
 
-
+    
     <div class="row mt-lg-4 mt-2">
         <div class="col-12 d-flex align-items-center justify-content-center">
             <nav aria-label="Page navigation example">
-                <ul class="pagination">
+                <ul class="pagination mt-3">
                   {% for page in range(0,pages) %}
                   {# {{ app.request.uri }} #}
                   {% if personId is defined %}

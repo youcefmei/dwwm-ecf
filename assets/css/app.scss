@@ -1,8 +1,5 @@
 @import "~bootstrap/scss/bootstrap";
 
-body {
-  background-color: #fff;
-}
 
 // SETTINGS
 
@@ -13,11 +10,26 @@ body {
 
 /* https://coolors.co/16302b-694873-8b728e-85b79d-c0e5c8 */
 
+
+$navAuthColor : #e5f3f3;
+$headerShadow : #85b79d;
+$cardShadow:#857e7e;
+$navLinkHover : #f3f3f3;
+$cardBorderAndNavHover : #694873;
+$btnColor: #507D7D;//85b79d
+// $btnColor: #85b79d;//85b79d
+
 // FONTS
 
+// NATIVE ELEMENTS
 * {
   font-family: "Roboto", sans-serif;
   letter-spacing: 0.05em;
+  word-break: keep-all;
+}
+
+body {
+  background-color: #fff;
 }
 
 header a,
@@ -28,55 +40,6 @@ h4,
 h5 {
   font-family: "Raleway", sans-serif;
 }
-
-div,a,li{
-  word-break: break-all;
-}
-
-.logo {
-  height: 14vw;
-}
-
-header {
-  box-shadow: 0px 1px 13px #85b79d;
-  & li .fs-6 {
-    font-weight: 500;
-  }
-
-  & .authentification li a {
-    letter-spacing: 0.02em;
-    background-color: #e5f3f3;
-  }
-}
-
-header li a {
-  text-transform: uppercase;
-  text-decoration: none;
-  letter-spacing: 0.04em;
-  display: inline-block;
-  padding: 15px 20px;
-  &:hover {
-    background-color: #f3f3f3;
-  }
-  &:hover:after {
-    width: 100%;
-    left: 0;
-  }
-  &::after {
-    background: none repeat scroll 0 0 transparent;
-    bottom: 0;
-    content: "";
-    display: block;
-    height: 2px;
-    left: 50%;
-    position: absolute;
-    background: #694873;
-    transition: width 0.3s ease 0s, left 0.3s ease 0s;
-    width: 0;
-  }
-}
-
-// Main
 
 h1 {
   text-transform: uppercase;
@@ -90,11 +53,64 @@ h2 {
   padding-bottom: 1px;
 }
 
+div,a,li{
+  word-break: break-all;
+}
+
+.logo {
+  height: 14vw;
+}
+
+// HEADER
+header {
+  box-shadow: 0px 1px 13px $headerShadow;
+  & li .fs-6 {
+    font-weight: 500;
+  }
+
+  & .authentification li a {
+    letter-spacing: 0.02em;
+    background-color: $navAuthColor;
+  }
+  & li a {
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    display: inline-block;
+    padding: 15px 20px;
+    &:hover {
+      background-color: $navLinkHover;
+    }
+    &:hover:after {
+      width: 100%;
+      left: 0;
+    }
+    &::after {
+      background: none repeat scroll 0 0 transparent;
+      bottom: 0;
+      content: "";
+      display: block;
+      height: 2px;
+      left: 50%;
+      position: absolute;
+      background: $cardBorderAndNavHover;
+      transition: width 0.3s ease 0s, left 0.3s ease 0s;
+      width: 0;
+    }
+  }
+}
+
+// Main
+
 .img-main {
   border: thin 1px #000;
   box-shadow: 1px 2px #8b728e;
 }
 
+span.input-group-text{
+  background-color: $btnColor;
+  color:#fff;
+}
 
 .description{
     height: 23vh;
@@ -108,14 +124,35 @@ h2 {
   }
 } 
 
+.card{
+  border-color: $cardBorderAndNavHover;
+  box-shadow: 1px -2px 4px 1px $cardShadow;
+  width:100%;
+  & img{
+    height: 40vh;
+    width:auto;
+    object-fit: contain; 
+    object-position: center;
+
+  }
+}
+
 fieldset+div{
     text-align: center;
 }
 
 .nav-item,.nav-link{
   word-break: break-word;
-
 }
+
+.btn{
+  background-color: $btnColor; 
+  &:hover{
+    background-color: $cardShadow;
+  }
+}
+
+
 //Footer
 
 footer li a {

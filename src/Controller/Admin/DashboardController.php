@@ -3,39 +3,45 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Quiz;
-use App\Entity\User;
 use App\Entity\Answer;
 use App\Entity\Course;
 use App\Entity\Lesson;
 use App\Entity\Section;
-use App\Entity\Student;
-
 use App\Entity\Teacher;
 use App\Entity\Question;
 use Doctrine\ORM\EntityManager;
+use App\Repository\AdminRepository;
 use App\Repository\TeacherRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 class DashboardController extends AbstractDashboardController
 {
-
+    public function __construct(private TeacherRepository $teacherRepository)
+    {
+        
+    }
 
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
         if (!($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_TEACHER'))){
-            // dd($this);
             return $this->redirectToRoute('home');
         }
-        // dd($this->getUser()->getTeacher());
+        // dd($this);
+        // $doctrine = new EntityManager(new ManagerRegistry());
+        // $manager = new ManagerRegistry(); 
+        $this->teacher = $this->teacherRepository->findOneBy(['user'=>$this->getUser()]);
+        // $this->admin = $this->adminRepository->findOneBy(['user'=>$this->getUser()]);
+        // dd($teacher);
         // $controller = $this->isGranted('ROLE_ADMIN') ? AdminCrudController::class : ArticleCrudController::class;
-        return $this->render("admin/dashboard.html.twig");
+        // dd($this->container);
+        return $this->render("admin/dashboard.html.twig",["teacher"=>$this->teacher]);
 
         // return parent::index();
 
@@ -59,7 +65,9 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Eco IT');
+            ->setTitle('Eco IT')
+            
+            ;
     }
 
     public function configureMenuItems(): iterable

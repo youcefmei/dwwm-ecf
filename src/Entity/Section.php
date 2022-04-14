@@ -21,11 +21,6 @@ class Section
     #[ORM\Column(type: 'string', length: 255)]
     private $slug;
 
-    // #[ORM\Column(type: 'datetime_immutable',options: [ "default" => new \DateTimeImmutable()])]
-    // private $created_at;
-
-    // #[ORM\Column(type: 'boolean')]
-    // private $is_published;
 
     #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'sections')]
     #[ORM\JoinColumn(nullable: true)]
@@ -41,8 +36,6 @@ class Section
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $added_at;
 
-    // #[ORM\Column(type: 'integer')]
-    // private $num_order;
 
     public function __construct()
     {
@@ -84,29 +77,6 @@ class Section
         return $this;
     }
 
-    // public function getCreatedAt(): ?\DateTimeImmutable
-    // {
-    //     return $this->created_at;
-    // }
-
-    // public function setCreatedAt(\DateTimeImmutable $created_at): self
-    // {
-    //     $this->created_at = $created_at;
-
-    //     return $this;
-    // }
-
-    // public function getIsPublished(): ?bool
-    // {
-    //     return $this->is_published;
-    // }
-
-    // public function setIsPublished(bool $is_published): self
-    // {
-    //     $this->is_published = $is_published;
-
-    //     return $this;
-    // }
 
     public function getCourse(): ?Course
     {
@@ -167,17 +137,6 @@ class Section
         return $this;
     }
 
-    // public function getNumOrder(): ?int
-    // {
-    //     return $this->num_order;
-    // }
-
-    // public function setNumOrder(int $num_order): self
-    // {
-    //     $this->num_order = $num_order;
-
-    //     return $this;
-    // }
 
     public function getAddedAt(): ?\DateTimeImmutable
     {

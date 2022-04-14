@@ -8,21 +8,17 @@ use App\Entity\LessonStudent;
 use App\Entity\Section;
 use App\Entity\Student;
 use App\Entity\Teacher;
-use App\Repository\CourseRepository;
-use App\Repository\LessonRepository;
-use App\Repository\SectionRepository;
-use App\Repository\StudentRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use OutOfBoundsException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Constraints\IsNull;
 
 class LessonController extends AbstractController
 {
-
+    /**
+     * Show a lesson 
+     */
     #[Route('/formation/{slugCourse}/{slugSection}/{slugLesson}', name: 'lesson')]
     public function lesson(string $slugCourse, string $slugSection, string $slugLesson, ManagerRegistry $doctrine,Request $request): Response
     {
@@ -72,6 +68,7 @@ class LessonController extends AbstractController
                 'course' => $course,
                 'section' => $section,
                 'lesson' => $lesson,
+                'allow'=>$allow,
                 'isFinnished' => $isFinnished,
             ]);
         }

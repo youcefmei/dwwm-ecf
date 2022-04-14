@@ -23,15 +23,15 @@
                         </svg></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-3">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-3  flex-column">
                         {% for sectionTemp in course.sections %}
                         {% if sectionTemp.lessons | length >0 %}
                         <li class="nav-item text-bold">
-                            &#x23F5;{{sectionTemp.title | capitalize}}ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+                            <span class="fs-4">&#x23F5;</span> {{sectionTemp.title | capitalize}}
 
                             {# <a href="{{section.slug}}">{{section.title}}</a> #}
 
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0  flex-column">
                                 {% for lessonTemp in sectionTemp.lessons %}
                                 <li class="nav-item">
                                     <a class="nav-link text-secondary bold"

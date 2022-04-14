@@ -12,27 +12,6 @@ class LoginController extends AbstractController
 {
 
 
-    // #[Route('/login', name: 'login',methods:["GET"])]
-    // public function loginGet(AuthenticationUtils $authenticationUtils,Request $request): Response
-    // {
-    //     // get the login error if there is one
-    //     $error = $authenticationUtils->getLastAuthenticationError();
-    //     // last username entered by the user
-    //     $lastUsername = $authenticationUtils->getLastUsername();
-    //     // if ($form->isSubmitted() && $form->isValid()) {
-    //     //     dd($request);
-    //     // }
-
-    //     // if ($this->isGranted("ROLE_TEACHER")){
-    //     //     yield MenuItem::linkToCrud('Formateurs', 'fas fa-list', Teacher::class);
-    //     // }
-
-    //     return $this->render('login/index.html.twig', [
-    //         'last_username' => $lastUsername,
-    //         'error'         => $error,
-    //         'controller_name' => 'LoginController',
-    //     ]);
-    // }
 
     #[Route('/login', name: 'login', methods: ["GET", "POST"])]
     public function loginPost(AuthenticationUtils $authenticationUtils, Request $request): Response

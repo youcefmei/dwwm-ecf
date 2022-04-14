@@ -20,8 +20,6 @@ class Quiz
     #[ORM\JoinColumn(nullable: false)]
     private $section;
 
-
-    
     public function __toString()
     {
         return $this->title;

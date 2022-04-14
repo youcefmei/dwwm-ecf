@@ -8,8 +8,12 @@
         <div class="row">
             <div class="col-12 text-center">
                 <h1 class="fs-2 my-3 my-lg-5">{{course.title}}</h1>
-                <img src="/images/courses/{{course.image}}" class="text-center w-50 card-img-bottom " alt="...">
             </div>
+            <div class="col-10 col-lg-6 col-xl-5  text-center mx-auto">
+                <img src="/images/courses/{{course.image}}" class="text-center w-50 card-img-bottom " alt="...">
+
+            </div>
+
             <div class="col-12 col-lg-8 mx-auto d-flex justify-content-center align-items-center ">
                 {% if is_granted("ROLE_STUDENT") %}
                     
@@ -33,10 +37,9 @@
                 {% for section in course.sections %}
                 {% if section.lessons | length >0 %}
                 <div class="col-12">
-                    <div class="">
+                    <div class="mb-2 mb-lg-3">
 
-                        <span class="ps-2 fs-2"></span>{{section.title |
-                        capitalize}}tttttttttttttttttttttttggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggtttttttttttttttttttttttttttttttttttttttttttttttttttttttuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+                        <span class="ps-2 fs-5 text-bold ">{{section.title | capitalize}}</span>
 
                     </div>
                     {# <a href="{{section.slug}}">{{section.title}}</a> #}

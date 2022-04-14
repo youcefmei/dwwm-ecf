@@ -10,9 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-// #[ORM\InheritanceType("JOINED")]
-// #[ORM\DiscriminatorColumn(name:"role", type:"string")]
-// #[ORM\DiscriminatorMap(["teacher" => Teacher::class, "student" => Student::class, "admin" => Admin::class])]
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: 'email', message: 'Ce compte existe dèja!')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface

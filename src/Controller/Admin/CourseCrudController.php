@@ -64,7 +64,6 @@ class CourseCrudController extends AbstractCrudController
     {
         return $crud->setEntityLabelInPlural("Formations")
             ->setEntityLabelInSingular("Formation")
-            // ->setDefaultSort(["user.id" => "desc", "isApproved" => "asc",])
             ->setEntityPermission('ROLE_TEACHER')
             ->addFormTheme('@FOSCKEditor/Form/ckeditor_widget.html.twig')
         ;
@@ -85,7 +84,7 @@ class CourseCrudController extends AbstractCrudController
     {
         $this->setTeacher();
         yield TextField::new('title', label: "Intitulé de la formation");
-        yield TextEditorField::new('description')
+        yield TextEditorField::new('description')->setFormType(CKEditorType::class)
         
         ;
         // yield SlugField::new('slug')
@@ -129,16 +128,6 @@ class CourseCrudController extends AbstractCrudController
         else{
             $course->setPublishedAt(null);
         }
-        // dd($course);
-        // $file = new File('images/courses/' . $course->getImage(), $course->getImage());
-        // $course->setTeacher($this->teacher);
-        // $course->setImageFile($file);
-        // $course->setImageSize($file->getSize());
-        // dd($file->getSize());
-        // $course->setCreatedAt(new \DateTimeImmutable());
-        // $course->setImageSize(0);
-        // $entityManager->flush();
-        // dd($course);
         parent::persistEntity($entityManager, $course);
     }
 }

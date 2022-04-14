@@ -2,11 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Admin;
 use App\Entity\Student;
 use App\Entity\Teacher;
-use App\Form\RegistrationFormType;
 use App\Repository\AdminRepository;
 use App\Form\RegistrationAdminFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +13,6 @@ use App\Form\RegistrationTeacherFormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -119,4 +116,5 @@ class RegistrationController extends AbstractController
         ]);
 
     }
+
 }
