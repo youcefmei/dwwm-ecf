@@ -9,9 +9,12 @@ use Doctrine\ORM\QueryBuilder;
 use App\Repository\CourseRepository;
 use App\Repository\TeacherRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -32,6 +35,15 @@ class SectionCrudController extends AbstractCrudController
         
     }
 
+    public function configureActions(Actions $actions): Actions
+{
+    return $actions
+        // ...
+        // this will forbid to create or delete entities in the backend
+        ->disable(Action::NEW, Action::DELETE)
+    ;
+}
+
     public function setTeacher()
     {
         $this->teacher = $this->teacherRepository->findOneBy(["user" => $this->getUser()]);
@@ -44,7 +56,8 @@ class SectionCrudController extends AbstractCrudController
         $this->courses = $this->teacher->getCourses();
         $response = $this->entityRepo->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        $response->andWhere('entity.course in (:courses)')->setParameter('courses', $this->courses);
+        // $response->andWhere('entity.course in (:courses)')->setParameter('courses', $this->courses);
+        $response->andWhere('entity.teacher = :teacher')->setParameter('teacher', $this->teacher);
         return $response;
     }
 
@@ -54,25 +67,40 @@ class SectionCrudController extends AbstractCrudController
         
         return Section::class;
     }
-
+    
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('course')
+            ->add('title')
+        ;
+    }
 
     public function configureFields(string $pageName): iterable
     {
         $this->setTeacher();
-
+        // dd($this->teacher);
         
-        yield TextField::new('title');
+        yield TextField::new('title',label:"Titre");
         yield AssociationField::new('course', 'Formation')
             ->setSortable(true)
             ->setFormTypeOptions([
                 'query_builder' => function (CourseRepository $course) {
-                    return $course->createQueryBuilder('entity')
-                    ->where('entity.teacher = :teacher')
-                    ->setParameter('teacher', $this->teacher)
+                    
+                     $course->createQueryBuilder('entity')
+                     ->where('entity.teacher = :teacher')
+                     ->setParameter('teacher', $this->teacher)
                     ;
                 },
             ])
+            ->onlyOnDetail()
+            ->onlyOnIndex()
             ;
+        yield CollectionField::new('lessons', 'Leçons')
+        ->setEntryType(LessonType::class)
+    
+        // ->setFormType(LessonType::class)
+        ;
         yield AssociationField::new('quiz', 'Quiz');
         yield DateField::new('addedAt', 'Date d\'ajout')
         ->onlyOnIndex();
@@ -86,24 +114,35 @@ class SectionCrudController extends AbstractCrudController
         
     }
 
+    private function entityCommon(EntityManagerInterface $entityManager,Section $section):Section
+    {
+        /** @var Section $section */
+        $slug = (new AsciiSlugger())->slug( strtolower($section->getTitle()) );
+        $section->setSlug($slug);
+        
+        foreach ($section->getLessons() as $lesson) {
+            $lesson->setTeacher($this->teacher);
+            $entityManager->persist($lesson);
+        }
+        // dd($section);
+        return $section;
+    }
+
+
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         /** @var Section $section */
-        $section = $entityInstance;
-        // $section->setCreatedAt(new \DateTimeImmutable());
-        $slug = (new AsciiSlugger())->slug($section->getTitle());
-        $section->setSlug($slug);
+        $section = $this->entityCommon($entityManager,$entityInstance);
         $section->setAddedAt(new \DateTimeImmutable()) ;
-        // $section->setCourse($this->teacher);
-        // $file = new File('images/courses/' . $course->getImage(), $course->getImage());
-        // $course->setTeacher($this->teacher);
-        // $course->setImageFile($file);
-        // $course->setImageSize($file->getSize());
-        // dd($file->getSize());
-        // $course->setCreatedAt(new \DateTimeImmutable());
-        // $course->setImageSize(0);
-        // $entityManager->flush();
-        // dd($course);
+        $section->setTeacher($this->teacher);
         parent::persistEntity($entityManager, $section);
     }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var Section $section */
+        $section = $this->entityCommon($entityManager,$entityInstance);
+        parent::persistEntity($entityManager, $section);
+    }
+
 }

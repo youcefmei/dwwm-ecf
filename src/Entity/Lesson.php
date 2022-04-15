@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\LessonRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\LessonRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[ORM\Entity(repositoryClass: LessonRepository::class)]
 class Lesson
@@ -28,7 +29,7 @@ class Lesson
     private $is_published;
 
     #[ORM\ManyToOne(targetEntity: Section::class, inversedBy: 'lessons')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private $section;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -39,6 +40,10 @@ class Lesson
 
     #[ORM\OneToMany(mappedBy: 'lesson', targetEntity: LessonStudent::class, orphanRemoval: true)]
     private $lessonStudents;
+
+    #[ORM\ManyToOne(targetEntity: Teacher::class, inversedBy: 'lessons')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $teacher;
 
 
 
@@ -121,6 +126,9 @@ class Lesson
     public function setTitle(string $title): self
     {
         $this->title = $title;
+        if(!$this->slug){
+            $this->slug= (new AsciiSlugger())->slug($title);
+        }
 
         return $this;
     }
@@ -163,6 +171,18 @@ class Lesson
                 $lessonStudent->setLesson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTeacher(): ?Teacher
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(?Teacher $teacher): self
+    {
+        $this->teacher = $teacher;
 
         return $this;
     }

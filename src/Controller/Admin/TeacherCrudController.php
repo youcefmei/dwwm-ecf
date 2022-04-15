@@ -9,6 +9,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
@@ -48,6 +49,15 @@ class TeacherCrudController extends AbstractCrudController
             ;
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+        ->add('isApproved')
+        ->add('approvedAt')
+        ;
+    }
+
+
     public function configureFields(string $pageName): iterable
     {
         yield TextField::new('firstname', "Prénom")->onlyOnIndex();
@@ -77,5 +87,6 @@ class TeacherCrudController extends AbstractCrudController
             // ->setUploadedFileNamePattern('[randomhash].[extension]')
             // ->setRequired(false)
         ;
+        return  $this->render('admin/dashboard.html.twig');
     }
 }

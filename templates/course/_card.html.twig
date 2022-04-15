@@ -1,3 +1,14 @@
+{% if teacher is not defined or admin is not defined  %}
+
+    {% set teacher = app.user is not null ?  app.user.teacher:null %}
+    {% set admin = app.user is not null ?  app.user.admin:null %}
+    {% set student = app.user is not null ?  app.user.student:null %}
+    {% if allow is not defined %}
+        {% set allow = false %}
+    {% endif %}
+
+{% endif %}
+
 {% set section = course.sections.first %}
 {% set lesson = section ?  section.lessons.first:"" %}
 
@@ -10,7 +21,7 @@
             <div class="card-text">{{course.description |raw}}</div>
             <div class="mt-auto text-center">
 
-                {% if admin or ( allow and teacher and lesson!="" ) %}
+                {% if (admin or ( allow and teacher)) and lesson!="" %}
                     {# show first lesson #}
                 <a href="{{path('lesson',{slugCourse:course.slug,slugSection:section.slug,slugLesson:lesson.slug,})}}"
                     class="btn text-white w-50 btn-show mx-auto mt-3">Voir</a>

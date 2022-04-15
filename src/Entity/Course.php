@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints\Range;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -85,6 +86,9 @@ class Course
     {
         $this->title = $title;
         $this->updatedAt = new \DateTimeImmutable();
+        if(!$this->slug){
+            $this->slug= (new AsciiSlugger())->slug($title);
+        }
         return $this;
     }
 
@@ -189,6 +193,7 @@ class Course
     #[ORM\JoinColumn(nullable: true)]
     private $teacher;
 
+    // #[ORM\OneToMany(mappedBy: 'course', targetEntity: CourseStudent::class, orphanRemoval: true,cascade:["persist", "remove"])]
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: CourseStudent::class, orphanRemoval: true)]
     private $courseStudents;
 

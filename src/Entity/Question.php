@@ -16,6 +16,10 @@ class Question
     #[ORM\Column(type: 'string', length: 255)]
     private $title;
 
+    #[ORM\ManyToOne(targetEntity: Teacher::class, inversedBy: 'questions')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $teacher;
+
 
     
     public function __toString()
@@ -35,6 +39,18 @@ class Question
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getTeacher(): ?Teacher
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(?Teacher $teacher): self
+    {
+        $this->teacher = $teacher;
 
         return $this;
     }

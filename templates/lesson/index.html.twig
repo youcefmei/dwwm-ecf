@@ -1,8 +1,10 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}Eco IT | Formation{% endblock %}
 
 {% block body %}
+
 
 
 
@@ -15,12 +17,8 @@
                 <button class="navbar-toggler me-auto" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-list-nested" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z" />
-                            <!-- At 00:00:05, on day 1 of the month, and on Sunday, only in March -->
-                        </svg></span>
+                    <span class="bi bi-list-nested"></span>
+                    
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-3  flex-column">
@@ -35,7 +33,7 @@
                                 {% for lessonTemp in sectionTemp.lessons %}
                                 <li class="nav-item">
                                     <a class="nav-link text-secondary bold"
-                                        href="{{path('lesson',{slugCourse:course.slug,slugSection:sectionTemp.slug,slugLesson:lessonTemp.slug})}}"><span class="ps-3">&#x27A5;</span> {{lessonTemp.title}}</a>
+                                        href="{{path('lesson',{slugCourse:course.slug,slugSection:sectionTemp.slug,slugLesson:lessonTemp.slug})}}"><span class="ps-3">&#x27A5;</span> {{lessonTemp.title}} <span class="bi bi-check text-dark"></span></a>
                                 </li>
                                 {% endfor %}
                             </ul>
@@ -51,7 +49,8 @@
         <div class="col-12 col-lg-9 mt-3 mt-lg-5 course-content">
             <h1 class="text-center fs-3">{{course.title}}</h1>
             <h2 class="text-center fs-3 my-4">{{lesson.title}}</h1>
-            {% set media = lesson.media | replace({'https://www.youtube.com/watch?v=': "https://www.youtube-nocookie.com/embed/", 'https://youtu.be/': "https://www.youtube-nocookie.com/embed/"})%}
+            {# {% set media = lesson.media | replace({'https://www.youtube.com/watch?v=': "https://www.youtube-nocookie.com/embed/", 'https://youtu.be/': "https://www.youtube-nocookie.com/embed/"})%} #}
+            {% set media = lesson.media | replace({'https://www.youtube.com/watch?v=': "https://www.youtube.com/embed/", 'https://youtu.be/': "https://www.youtube.com/embed/"})%}
             <div class="d-flex col-lg-8 video offset-lg-2 my-4">
     
                 <iframe src="{{media }}" title="{{lesson.title}} | Video" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -60,13 +59,16 @@
 
             {# only for students #}
             {% if isFinnished is not null %}
-            <form action="" method="GET">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="true"  name="lesson-complete"  id="lesson-complete" onChange="this.form.submit()"  {% if isFinnished %}checked disabled{% endif %}
-                    >
-                    <label class="form-check-label" for="lesson-complete">
-                        Leçon terminée
-                    </label>
+            <form action="" method="GET" class="d-flex justify-content-center align-content-center fs-5 ">
+                <div class="form-check mt-4 lesson-check-form">
+                    <div class="m-2">
+
+                        <input class="form-check-input " type="checkbox" value="true"  name="lesson-complete"  id="lesson-complete" onChange="this.form.submit()"  {% if isFinnished %}checked disabled{% endif %}>
+                        <label class="form-check-label " for="lesson-complete">
+                            Leçon terminée
+                        </label>
+
+                    </div>
                 </div>
             </form>
             {% endif %}
@@ -75,8 +77,7 @@
         </div>
     </div>
 </div>
-
-
-
+<script src="{{asset('js/highlight.min.js')}}"></script>
+<script>hljs.highlightAll();</script>
 
 {% endblock %}

@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\SectionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\SectionRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[ORM\Entity(repositoryClass: SectionRepository::class)]
 class Section
@@ -23,24 +24,33 @@ class Section
 
 
     #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'sections')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: false)]
     private $course;
 
     // #[ORM\OneToMany(mappedBy: 'section', targetEntity: Lesson::class, orphanRemoval: true)]
     #[ORM\OneToMany(mappedBy: 'section', targetEntity: Lesson::class)]
     private $lessons;
 
-    #[ORM\OneToOne(mappedBy: 'section', targetEntity: Quiz::class, cascade: ['persist', 'remove'])]
+    // #[ORM\OneToOne(mappedBy: 'section', targetEntity: Quiz::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'section', targetEntity: Quiz::class)]
     private $quiz;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private $added_at;
+
+    #[ORM\ManyToOne(targetEntity: Teacher::class, inversedBy: 'sections')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $teacher;
+
+    #[ORM\Column(type: 'boolean')]
+    private $is_published;
 
 
     public function __construct()
     {
         $this->lessons = new ArrayCollection();
         $this->added_at = new \DateTimeImmutable();
+        $this->is_published = false;
     }
 
     
@@ -61,6 +71,9 @@ class Section
     public function setTitle(string $title): self
     {
         $this->title = $title;
+        if(!$this->slug){
+            $this->slug= (new AsciiSlugger())->slug($title);
+        }
 
         return $this;
     }
@@ -146,6 +159,30 @@ class Section
     public function setAddedAt(?\DateTimeImmutable $added_at): self
     {
         $this->added_at = $added_at;
+
+        return $this;
+    }
+
+    public function getTeacher(): ?Teacher
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(?Teacher $teacher): self
+    {
+        $this->teacher = $teacher;
+
+        return $this;
+    }
+
+    public function getIsPublished(): ?bool
+    {
+        return $this->is_published;
+    }
+
+    public function setIsPublished(bool $is_published): self
+    {
+        $this->is_published = $is_published;
 
         return $this;
     }

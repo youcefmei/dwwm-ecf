@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
@@ -90,8 +91,10 @@ class CourseCrudController extends AbstractCrudController
         // yield SlugField::new('slug')
         // ->setTargetFieldName('title');
         yield BooleanField::new('is_published', label: "Publier la formation ?");
-        // yield CollectionField::new('sections', label: "Sections")
-        //     ->setEntryType(SectionType::class);
+        yield CollectionField::new('sections', label: "Sections")
+            ->setEntryType(SectionType::class)
+            // ->setCustomOptions([])
+            ;
 
         yield ImageField::new('image', 'Image')
             ->onlyOnIndex()
@@ -113,21 +116,48 @@ class CourseCrudController extends AbstractCrudController
         yield $imageField;
     }
 
-
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    public function configureFilters(Filters $filters): Filters
     {
-        /** @var Course $course */
-        $course = $entityInstance;
-        $course->setCreatedAt(new \DateTimeImmutable());
-        $slug = (new AsciiSlugger())->slug($course->getTitle());
+        return $filters
+        ->add('title')
+        ->add('is_published')
+        ->add('sections')
+        ;
+    }
+
+    private function entityCommon(EntityManagerInterface $entityManager,Course $course):Course
+    {
+        /** @var Section $section */
+        $slug = (new AsciiSlugger())->slug( strtolower($course->getTitle()) );
         $course->setSlug($slug);
-        $course->setTeacher($this->teacher);
         if($course->getIsPublished()){
             $course->setPublishedAt(new \DateTimeImmutable());
         }
         else{
             $course->setPublishedAt(null);
         }
+        foreach ($course->getSections() as $section) {
+            $section->setTeacher($this->teacher);
+            $entityManager->persist($section);
+        }
+        return $course;
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var Course $course */
+        $course = $this->entityCommon($entityManager,$entityInstance);
+        $course->setTeacher($this->teacher);
+        $course->setCreatedAt(new \DateTimeImmutable());
+        parent::persistEntity($entityManager, $course);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        /** @var Course $course */
+        
+        $course = $this->entityCommon($entityManager,$entityInstance);
+                
         parent::persistEntity($entityManager, $course);
     }
 }

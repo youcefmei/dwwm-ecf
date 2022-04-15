@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Repository\CourseRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
@@ -13,9 +13,9 @@ class HomeController extends AbstractController
     public function index(CourseRepository $courseRepository): Response
     {
         $courses = $courseRepository->findBy(["is_published"=>true],$orderBy=['published_at'=>'desc'],limit:3);
-                             
         return $this->render('home/index.html.twig', [
             'courses' => $courses,
+            
         ]);
     }
 

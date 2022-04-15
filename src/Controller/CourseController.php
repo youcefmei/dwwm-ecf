@@ -34,6 +34,8 @@ class CourseController extends AbstractController
         $searching = $request->query->get("s");
         if (is_null($searching)){
             $courses = $courseRepository->findBy(["is_published"=>true],$orderBy=['published_at'=>'desc'],$limit=$limit,$offset = $offset); 
+            
+            // dd($courses);
             return $this->render('course/index.html.twig', [
                 'mainTitle'=> "NOTRE CATALOGUE",
                 'courses' => $courses,
@@ -126,8 +128,9 @@ class CourseController extends AbstractController
      * 
      */
     #[Route('/formations/formateur/{id<\d+>}', name: 'courses.teacher')]
-    public function teacherCourses(Teacher $teacher,Request $request,CourseRepository $courseRepository): Response
+    public function teacherCourses(Teacher $teacher,Request $request,ManagerRegistry $doctrine): Response
     {
+        
         if ($teacher->getUser() == $this->getUser()){            
             //Pagination
             $courses_all_size =  sizeof($teacher->getCourses());
@@ -137,7 +140,7 @@ class CourseController extends AbstractController
                     
             $searching = $request->query->get("s");
             if (is_null($searching)){
-                $courses = $courseRepository->findBy(["teacher"=>$teacher],$orderBy=['created_at'=>'desc'],$limit=$limit,$offset = $offset); 
+                $courses = $doctrine->getRepository(Course::class)->findBy(["teacher"=>$teacher],$orderBy=['created_at'=>'desc'],$limit=$limit,$offset = $offset); 
                 return $this->render('course/index.html.twig', [
                     'mainTitle'=> "Mes Formations",
                     'courses' => $courses,
@@ -149,7 +152,7 @@ class CourseController extends AbstractController
                 ]);
             }
             else{
-                $courses = $courseRepository->findByTitleLike($searching,$offset,$limit,null); 
+                $courses = $doctrine->getRepository(Course::class)->findByTitleLike($searching,$offset,$limit,null); 
                 return $this->render('course/_courses.html.twig', [
                     'mainTitle'=> "Mes Formations",
                     'courses' => $courses,

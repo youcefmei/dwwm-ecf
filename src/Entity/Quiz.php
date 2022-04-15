@@ -20,6 +20,10 @@ class Quiz
     #[ORM\JoinColumn(nullable: false)]
     private $section;
 
+    #[ORM\ManyToOne(targetEntity: Teacher::class, inversedBy: 'quizzes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $teacher;
+
     public function __toString()
     {
         return $this->title;
@@ -49,6 +53,18 @@ class Quiz
     public function setSection(Section $section): self
     {
         $this->section = $section;
+
+        return $this;
+    }
+
+    public function getTeacher(): ?Teacher
+    {
+        return $this->teacher;
+    }
+
+    public function setTeacher(?Teacher $teacher): self
+    {
+        $this->teacher = $teacher;
 
         return $this;
     }
