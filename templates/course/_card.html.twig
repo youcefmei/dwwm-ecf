@@ -4,36 +4,47 @@
     {% set admin = app.user is not null ?  app.user.admin:null %}
     {% set student = app.user is not null ?  app.user.student:null %}
     {% if allow is not defined %}
-        {% set allow = false %}
+    {% set allow = false %}
     {% endif %}
 
+{% endif %}
+{% if student and coursesInProgress is defined and (course in coursesInProgress or   course in coursesCompleted) %}
+{% set allow = true %}
 {% endif %}
 
 {% set section = course.sections.first %}
 {% set lesson = section ?  section.lessons.first:"" %}
 
+
+
 {# {% if lesson!="" %} #}
-<div class="col-lg-4 col-12 d-flex align-items-stretch">
+<div class="col-lg-4 col-12 d-flex align-items-stretch card-course">
     <div class="card mt-4 mt-lg-5 ">
         <img src="/images/courses/{{course.image}}" class="card-img-bottom mt-2 mt-lg-4" alt="...">
         <div class="card-body d-flex flex-column">
             <h5 class="card-title text-center mt-1 mt-lg-3 fs-4 bg-light text-dark py-1">{{course.title}}</h5>
             <div class="card-text">{{course.description |raw}}</div>
             <div class="mt-auto text-center">
-
+                
+                
                 {% if (admin or ( allow and teacher)) and lesson!="" %}
                     {# show first lesson #}
-                <a href="{{path('lesson',{slugCourse:course.slug,slugSection:section.slug,slugLesson:lesson.slug,})}}"
+                    <a href="{{path('lesson',{slugCourse:course.slug,slugSection:section.slug,slugLesson:lesson.slug,})}}"
                     class="btn text-white w-50 btn-show mx-auto mt-3">Voir</a>
                     {% elseif teacher %}
                     {# show course plan #}
                     <a href="{{path('course.show',{slug:course.slug})}}"
                     class="btn text-white w-50 btn-show mx-auto mt-3">Voir</a>
+                    {% elseif student and allow and coursesCompleted is defined and course in coursesCompleted %}
+                    {# course is complete #}
+                    <a href="{{path('course.show',{slug:course.slug})}}"
+                    class="btn text-white w-50 btn-show mx-auto mt-3 completed-course">Terminé</a>
                     {% elseif student and allow %}
                     {# continue a course #}
                     <a href="{{path('course.show',{slug:course.slug})}}"
-                    class="btn text-white w-50 btn-show mx-auto mt-3">Continuer</a>
-                    {% elseif student and not allow and lesson!=""%}
+                    class="btn text-white w-50 btn-show mx-auto mt-3 inprogress-course">Continuer</a>
+
+                    {% elseif student and not allow and lesson!="" %}
                     {# enroll a course, show first lesson #}
                     <a href="{{path('lesson',{slugCourse:course.slug,slugSection:section.slug,slugLesson:lesson.slug,})}}"
                     class="btn text-white w-50 btn-show mx-auto mt-3">S'inscrire</a>

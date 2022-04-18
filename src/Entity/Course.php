@@ -12,13 +12,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints\Range;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
 
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 #[Vich\Uploadable] 
-// #[Valid]
 class Course
 {
     #[ORM\Id]
@@ -27,12 +27,14 @@ class Course
     private $id;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[NotBlank(message:'Veuillez entrer un titre')]
     private $title;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
     private $slug;
 
     #[ORM\Column(type: 'text')]
+    #[NotBlank(message:'Veuillez entrer du texte')]
     private $description;
 
     #[ORM\Column(type: 'datetime_immutable')]
@@ -42,8 +44,13 @@ class Course
     #[ORM\Column(type: 'boolean')]
     private $is_published;
 
-    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Section::class, orphanRemoval: true)]
     // #[ORM\OneToMany(mappedBy: 'course', targetEntity: Section::class)]
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Section::class, orphanRemoval: true,cascade:['remove'])]
+    #[Assert\Unique]
+    #[Assert\Count(
+        min: 1,
+        minMessage: 'Il faut au moins une section',
+    )]
     private $sections;
 
 
@@ -60,6 +67,7 @@ class Course
 
     public function __construct()
     {
+        $this->image = "";
         $this->sections = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
@@ -181,6 +189,7 @@ class Course
             max: 1000000,
             notInRangeMessage: 'Max file size is 1M',
         )]
+        #[NotBlank(message:'Veuillez choisir une image')]
         private ?int $imageSize = null;
     
     /**

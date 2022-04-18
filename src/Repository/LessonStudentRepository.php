@@ -45,6 +45,26 @@ class LessonStudentRepository extends ServiceEntityRepository
         }
     }
 
+
+    public function findLessonsByStudent($student)
+    {
+        $result = $this->createQueryBuilder('ls')
+        ->andWhere('ls.student = :val')
+        ->setParameter('val', $student)
+        ->getQuery()
+        ->getResult()
+    ;
+    
+    // dd($result);
+    $ret = [];
+        foreach ($result as $value) {
+            if($value){
+                $ret[] =$value->getLesson()->getId();
+            }
+        }
+        return $ret;
+    }
+
     // /**
     //  * @return LessonStudent[] Returns an array of LessonStudent objects
     //  */

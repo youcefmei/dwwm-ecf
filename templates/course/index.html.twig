@@ -11,52 +11,33 @@
 <main>
 
     <h1 class="text-center mt-5 fs-3">{{mainTitle}}</h1>
-    <div class="container  mt-5 px-5">
+    <div class="container  mt-5 px-2 px-lg-5">
         <div class="row">
-            <div class="col">
+            <div class="col-12">
                 <div class="input-group input-group-lg">
                     <span class="input-group-text px-3 px-lg-5"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                       </svg></span>
                     <input type="text" class="form-control" aria-label="Chercher une formation" placeholder="..."
                         aria-describedby="search-courses" id="search-courses">
+                        {# <button class="btn text-white rounded-end rounded-1">chercher</button> #}
+                    </div>
                 </div>
-            </div>
+                {% if is_granted("ROLE_STUDENT") %}
+                
+                <div class="col-8 col-sm-6 col-lg-4 col-xl-3 ms-auto mt-4">
+
+                    <select class="form-select filter-course" aria-label="filtrer formations" id="select-inprogress-completed" >
+                        <option selected>&#9947; filtre (Aucun)</option>
+                        <option value="inprogress">Formations en cours</option>
+                        <option value="completed">Formations terminées</option>
+                    </select>
+                </div>
+                {% endif %}
         </div>
     </div>
 
     {% include "course/_courses.html.twig" %}
-    <script defer>
-        let courseBlock = document.getElementById("courses")
-        let searchCourse = document.getElementById("search-courses")
-        var previousUrl = window.location.href 
-        searchCourse.addEventListener("input", (e) => {
-            var url = new URL(previousUrl)
-            const urlSearchParams = new URLSearchParams(window.location.search);
-            urlSearchParams.set("s", searchCourse.value)
-            url.search = urlSearchParams.toString()
-            // console.log(url)
-            fetch(url).then((response) => {
-                if (response.status !== 200) {
-                    console.log(
-                        "Looks like there was a problem. Status Code: " + response.status
-                    )
-                    return
-                }
-                return response.text()
-            })
-                .then((res) => {
-                    while (courseBlock.firstChild) {
-                        courseBlock.removeChild(courseBlock.firstChild)
-                    }
-                    let template = document.createElement("template")
-                    html = res.trim()
-                    template.innerHTML = html
-                    //   console.log(html)
-                    courseBlock.appendChild(template.content.firstChild)
-                            })
-        })
-
-    </script>
+<script src="{{asset("js/course.js")}}"></script>
 </main>
 {% endblock %}

@@ -101,13 +101,6 @@ class DashboardController extends AbstractDashboardController
                 // MenuItem::linkToCrud('Ajouter', 'fas fa-plus', Question::class)->setAction(Crud::PAGE_NEW)
             ]);
 
-            yield MenuItem::subMenu('Réponses', 'fas fa-sun')->setSubItems([
-                MenuItem::linkToCrud('Toutes mes réponses', 'fas fa-list', Answer::class),
-                // MenuItem::linkToCrud('Ajouter', 'fas fa-plus', Answer::class)->setAction(Crud::PAGE_NEW)
-            ]);
-
-                    
-            
         }
     }
 }

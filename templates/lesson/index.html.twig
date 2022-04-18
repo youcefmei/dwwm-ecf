@@ -18,23 +18,50 @@
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="bi bi-list-nested"></span>
-                    
+
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 mt-3  flex-column">
+                        {% if allow and is_granted('ROLE_STUDENT') %}
+                        <li class="nav-item text-bold  mb-3 ">
+                            <div class="progress mx-5">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                    style="width: {{courseProgress}}%" aria-valuenow="{{courseProgress}}"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                <span>{{courseProgress}}%</span>
+                            </div>
+                        </li>
+                        {% elseif is_granted('ROLE_ADMIN') %}
+                        <span>Formateur: <a href="mailto:{{course.teacher.user}}"> {{course.teacher.user}}</a> </span>
+                        {% endif %}
+                        {% set show = true %}
                         {% for sectionTemp in course.sections %}
-                        {% if sectionTemp.lessons | length >0 %}
+                        {% if is_granted('ROLE_STUDENT') and not sectionTemp.isPublished %}
+                        {% set show = false %}
+                        
+                        {% endif %}
+
+                        {% if (sectionTemp.lessons | length >0) and show %}
+
                         <li class="nav-item text-bold">
                             <span class="fs-4">&#x23F5;</span> {{sectionTemp.title | capitalize}}
-
-                            {# <a href="{{section.slug}}">{{section.title}}</a> #}
-
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0  flex-column">
                                 {% for lessonTemp in sectionTemp.lessons %}
+                                {% if is_granted('ROLE_STUDENT') and not lessonTemp.isPublished %}
+                                {% set show = false %}
+                                {% endif %}
+                                {% if show %}
+                                
                                 <li class="nav-item">
                                     <a class="nav-link text-secondary bold"
-                                        href="{{path('lesson',{slugCourse:course.slug,slugSection:sectionTemp.slug,slugLesson:lessonTemp.slug})}}"><span class="ps-3">&#x27A5;</span> {{lessonTemp.title}} <span class="bi bi-check text-dark"></span></a>
+                                        href="{{path('lesson',{slugCourse:course.slug,slugSection:sectionTemp.slug,slugLesson:lessonTemp.slug})}}"><span
+                                            class="ps-3">&#x27A5;</span> {{lessonTemp.title}} {% if lessonTemp in
+                                        lessonsCompleted and is_granted('ROLE_STUDENT') %}<i
+                                            class="bi bi-check text-success fs-5"></i>{% elseif
+                                        is_granted('ROLE_STUDENT') %}<i class="bi bi-watch text-dark"></i>
+                                        {% endif %} </a>
                                 </li>
+                                {% endif %}
                                 {% endfor %}
                             </ul>
                         </li>
@@ -45,39 +72,74 @@
                 </div>
             </nav>
         </div>
-        
+
         <div class="col-12 col-lg-9 mt-3 mt-lg-5 course-content">
-            <h1 class="text-center fs-3">{{course.title}}</h1>
+            <h1 class="text-center fs-3 bg-light">{{course.title}}</h1>
             <h2 class="text-center fs-3 my-4">{{lesson.title}}</h1>
-            {# {% set media = lesson.media | replace({'https://www.youtube.com/watch?v=': "https://www.youtube-nocookie.com/embed/", 'https://youtu.be/': "https://www.youtube-nocookie.com/embed/"})%} #}
-            {% set media = lesson.media | replace({'https://www.youtube.com/watch?v=': "https://www.youtube.com/embed/", 'https://youtu.be/': "https://www.youtube.com/embed/"})%}
-            <div class="d-flex col-lg-8 video offset-lg-2 my-4">
-    
-                <iframe src="{{media }}" title="{{lesson.title}} | Video" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            {{lesson.content | raw}}
+                {# {% set media = lesson.media | replace({'https://www.youtube.com/watch?v=':
+                "https://www.youtube-nocookie.com/embed/", 'https://youtu.be/':
+                "https://www.youtube-nocookie.com/embed/"})%} #}
+                <div class="d-flex col-lg-8 video offset-lg-2 my-4">
+                    {% if lesson.media[-4:]==".mp4" %}
+                    <video class="mx-auto" controls>
+                        <source src="{{lesson.media}}" type="video/mp4">
+                    </video>
+                    {% elseif lesson.media[-5:]==".webm" %}
+                    <video class="mx-auto" controls>
+                        <source src="{{lesson.media}}" type="video/webm">
+                    </video>
+                    {% else %}
+                    {% set media = lesson.media | replace({'https://www.youtube.com/watch?v=':
+                    "https://www.youtube.com/embed/", 'https://youtu.be/': "https://www.youtube.com/embed/"})%}
 
-            {# only for students #}
-            {% if isFinnished is not null %}
-            <form action="" method="GET" class="d-flex justify-content-center align-content-center fs-5 ">
-                <div class="form-check mt-4 lesson-check-form">
-                    <div class="m-2">
-
-                        <input class="form-check-input " type="checkbox" value="true"  name="lesson-complete"  id="lesson-complete" onChange="this.form.submit()"  {% if isFinnished %}checked disabled{% endif %}>
-                        <label class="form-check-label " for="lesson-complete">
-                            Leçon terminée
-                        </label>
-
-                    </div>
+                    <iframe src="{{media }}" title="{{lesson.title}} | Video" frameborder="0"
+                        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen class="mx-auto"></iframe>
+                    {% endif %}
                 </div>
-            </form>
-            {% endif %}
-            
-            
+
+                {{lesson.content | raw}}
+
+                {# only for students #}
+                {% if isFinnished is not null %}
+                <form action="" method="GET" class="d-flex justify-content-center align-content-center fs-5 ">
+                    {# {% if false and isFinnished %}
+                    <div class="mt-4 px-1 lesson-check-form lesson-complete">
+                        <div class="m-2">
+                            <span class="text-center ">
+                                Terminée
+                            </span>
+                        </div>
+                    </div>
+                    {% else %} #}
+                    <div class="form-check mt-4 lesson-check-form">
+                        <div class="m-2">
+                            {% if isFinnished %}
+                            <input class="form-check-input" type="checkbox" value="false" name="lesson-complete" id="lesson-complete"  checked>
+                            {% else %}
+                            <input class="form-check-input" type="checkbox" value="true"  name="lesson-complete" id="lesson-complete" >
+                            {% endif %}
+                            <label class="form-check-label " for="lesson-complete">
+                                Terminée
+                            </label>
+                        </div>
+                    </div>
+
+                    {# {% endif %} #}
+                </form>
+                {% endif %}
+
+
         </div>
     </div>
 </div>
+
+
+<script src="{{asset('js/lesson.js')}}" ></script>
 <script src="{{asset('js/highlight.min.js')}}"></script>
 <script>hljs.highlightAll();</script>
+
+
+
 
 {% endblock %}

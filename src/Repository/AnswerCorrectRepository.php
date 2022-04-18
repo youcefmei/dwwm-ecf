@@ -2,30 +2,30 @@
 
 namespace App\Repository;
 
-use App\Entity\Answer;
+use App\Entity\AnswerCorrect;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Answer|null find($id, $lockMode = null, $lockVersion = null)
- * @method Answer|null findOneBy(array $criteria, array $orderBy = null)
- * @method Answer[]    findAll()
- * @method Answer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method AnswerCorrect|null find($id, $lockMode = null, $lockVersion = null)
+ * @method AnswerCorrect|null findOneBy(array $criteria, array $orderBy = null)
+ * @method AnswerCorrect[]    findAll()
+ * @method AnswerCorrect[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AnswerRepository extends ServiceEntityRepository
+class AnswerCorrectRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Answer::class);
+        parent::__construct($registry, AnswerCorrect::class);
     }
 
     /**
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function add(Answer $entity, bool $flush = true): void
+    public function add(AnswerCorrect $entity, bool $flush = true): void
     {
         $this->_em->persist($entity);
         if ($flush) {
@@ -37,7 +37,7 @@ class AnswerRepository extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function remove(Answer $entity, bool $flush = true): void
+    public function remove(AnswerCorrect $entity, bool $flush = true): void
     {
         $this->_em->remove($entity);
         if ($flush) {
@@ -46,7 +46,7 @@ class AnswerRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return Answer[] Returns an array of Answer objects
+    //  * @return AnswerCorrect[] Returns an array of AnswerCorrect objects
     //  */
     /*
     public function findByExampleField($value)
@@ -63,7 +63,7 @@ class AnswerRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Answer
+    public function findOneBySomeField($value): ?AnswerCorrect
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.exampleField = :val')

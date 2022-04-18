@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\AnswerRepository;
+use App\Repository\AnswerWrongRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: AnswerRepository::class)]
-class Answer
+#[ORM\Entity(repositoryClass: AnswerWrongRepository::class)]
+class AnswerWrong
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,8 +16,10 @@ class Answer
     #[ORM\Column(type: 'string', length: 255)]
     private $title;
 
-    #[ORM\Column(type: 'boolean')]
-    private $is_correct;
+    #[ORM\ManyToOne(targetEntity: Question::class, inversedBy: 'answerswrongs')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $question;
+
 
     public function getId(): ?int
     {
@@ -36,15 +38,16 @@ class Answer
         return $this;
     }
 
-    public function getIsCorrect(): ?bool
+    public function getQuestion(): ?Question
     {
-        return $this->is_correct;
+        return $this->question;
     }
 
-    public function setIsCorrect(bool $is_correct): self
+    public function setQuestion(?Question $question): self
     {
-        $this->is_correct = $is_correct;
+        $this->question = $question;
 
         return $this;
     }
+
 }

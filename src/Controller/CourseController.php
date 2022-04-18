@@ -29,12 +29,24 @@ class CourseController extends AbstractController
         $courses_all_size =  sizeof($courseRepository->findBy(["is_published"=>true],$orderBy=['published_at'=>'desc']));
         $pagination = $this->getPagination($request,$courses_all_size);
         extract($pagination);
+        //if student
+        $coursesInProgress=[];
+        $coursesCompleted=[];
+        $student = $doctrine->getRepository(Student::class)->findOneBy(["user"=>$this->getUser()]);
+        if($student){
+            foreach ($student->getCourseStudents() as $courseStudent) {
+                if ($courseStudent->getProgress()===100){
+                    $coursesCompleted[] = $courseStudent->getCourse();
+                }else{
+                    $coursesInProgress[] = $courseStudent->getCourse();
+                }
+            }
+        } 
         // courses
-        
         $searching = $request->query->get("s");
         if (is_null($searching)){
             $courses = $courseRepository->findBy(["is_published"=>true],$orderBy=['published_at'=>'desc'],$limit=$limit,$offset = $offset); 
-            
+                        
             // dd($courses);
             return $this->render('course/index.html.twig', [
                 'mainTitle'=> "NOTRE CATALOGUE",
@@ -42,6 +54,8 @@ class CourseController extends AbstractController
                 'offset'=>$offset,
                 'limit'=>$limit,
                 'pages'=> $pages,
+                'coursesCompleted'=>$coursesCompleted,
+                'coursesInProgress'=>$coursesInProgress,
             ]);
         }
         else{
@@ -52,6 +66,8 @@ class CourseController extends AbstractController
                 'offset'=>$offset,
                 'limit'=>$limit,
                 'pages'=> $pages,
+                'coursesCompleted'=>$coursesCompleted,
+                'coursesInProgress'=>$coursesInProgress,
             ]);
         }
     }
@@ -179,13 +195,17 @@ class CourseController extends AbstractController
             $pagination = $this->getPagination($request,$courses_all_size);
             extract($pagination);
             //
-            
             $searching = $request->query->get("s");
             $courses =[];
+            $coursesCompleted =[];
+            // dd($courseStudents);
             if (is_null($searching)){
                 
                 foreach ($courseStudents as $courseStudent) {
                     $courses[] = $courseStudent->getCourse();
+                    if ($courseStudent->getProgress()===100){
+                        $coursesCompleted[] = $courseStudent->getCourse();
+                    }
                 }
                 return $this->render('course/index.html.twig', [
                     'mainTitle'=> "Mes Formations",
@@ -193,11 +213,16 @@ class CourseController extends AbstractController
                     'offset'=>$offset,
                     'limit'=>$limit,
                     'pages'=> $pages,
+                    'allow'=>true,
+                    'coursesCompleted'=>$coursesCompleted,
                     'personId'=>$student->getId()
                 ]);
             }
             else{
                 foreach ($courseStudents as $courseStudent) {
+                    if ($courseStudent->getProgress()===100){
+                        $coursesCompleted[] = $courseStudent->getCourse();
+                    }
                     if (str_contains($courseStudent->getCourse() , $searching) ){
                         $courses[] = $courseStudent->getCourse();
                     }
@@ -208,6 +233,8 @@ class CourseController extends AbstractController
                     'offset'=>$offset,
                     'limit'=>$limit,
                     'pages'=> $pages,
+                    'allow'=>true,
+                    'coursesCompleted'=>$coursesCompleted,
                     'personId'=>$student->getId()
                 ]);
             }
@@ -218,7 +245,7 @@ class CourseController extends AbstractController
      * Gets the pagination
      *
      */
-    private function getPagination(Request $request,int $nbElmts) : array
+    private function getPagination(Request $request,int $nbElmts,int $defaultLimit=12) : array
     {   
         $pagination = [];
         $offset = $request->query->get("offset");
@@ -227,12 +254,13 @@ class CourseController extends AbstractController
         }
         $limit = $request->query->get("limit");
         if ( (is_null($limit)) || ($limit>50)|| ($limit<1) ){
-            $limit=12;
+            $limit=$defaultLimit;
         }
         $pages = intdiv($nbElmts ,$limit) ; 
         if ( ($limit * $pages) == $nbElmts ){
             $pages--;
         }
+        $pages = $pages>0 ? $pages:0;
         $pagination['offset'] = $offset;
         $pagination['limit'] = $limit;
         $pagination['pages'] = $pages;

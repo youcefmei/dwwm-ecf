@@ -21,7 +21,7 @@
                     <li class="page-item"><a class="page-link" href="{{path(current_path,{limit:limit,offset: page * limit})}}">{% if page==0 %}Page {% endif %}{{page+1}}</a></li>
                   {% endif %}
                   {% endfor %}
-                  {% if pages>0 %}
+                  {% if pages >0 %}
                     {% if personId is defined %}
                         <li class="page-item"><a class="page-link" href="{{path(current_path,{limit:limit,offset: offset + limit,id:personId})}}">Suivante</a></li>
                     {% else %}

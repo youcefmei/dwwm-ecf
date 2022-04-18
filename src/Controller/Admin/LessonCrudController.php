@@ -13,9 +13,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -97,7 +98,8 @@ class LessonCrudController extends AbstractCrudController
         $this->setTeacher();
         yield TextField::new("title", "Titre de la leçon");
         yield TextEditorField::new('content', "Contenu")
-            ->setFormType(CKEditorType::class);
+            ->setFormType(CKEditorType::class)
+            ;
         yield UrlField::new('media', "Video");
 
         yield TextField::new("section.course", "Formation")
@@ -112,9 +114,7 @@ class LessonCrudController extends AbstractCrudController
             ])
             ->onlyOnIndex()
         ;
-
-        // yield SlugField::new("slug", "Texte pour l'url")
-        //     ->setTargetFieldName("title");
+        
         yield BooleanField::new("is_published", "Publier la leçon ?");
     }
 
@@ -124,7 +124,14 @@ class LessonCrudController extends AbstractCrudController
         /** @var Lesson $lesson */
 
         $lesson->setTeacher($this->teacher);
-        // dd($lesson);
+        parent::persistEntity($entityManager, $lesson);
+    }
+    
+    public function updateEntity(EntityManagerInterface $entityManager, $lesson): void
+    {
+        /** @var Lesson $lesson */
+        
+        $lesson->setSlug((new AsciiSlugger())->slug($lesson->getTitle())) ;
         parent::persistEntity($entityManager, $lesson);
     }
 }

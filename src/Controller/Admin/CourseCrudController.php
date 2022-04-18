@@ -92,7 +92,7 @@ class CourseCrudController extends AbstractCrudController
         // ->setTargetFieldName('title');
         yield BooleanField::new('is_published', label: "Publier la formation ?");
         yield CollectionField::new('sections', label: "Sections")
-            ->setEntryType(SectionType::class)
+        ->setEntryType(SectionType::class)
             // ->setCustomOptions([])
             ;
 
@@ -160,4 +160,6 @@ class CourseCrudController extends AbstractCrudController
                 
         parent::persistEntity($entityManager, $course);
     }
+    
+
 }

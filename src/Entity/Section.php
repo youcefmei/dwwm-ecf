@@ -7,8 +7,13 @@ use App\Repository\SectionRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SectionRepository::class)]
+#[ORM\UniqueConstraint(
+  name: 'course_title_idx',
+  columns: ['title', 'course_id']
+)]
 class Section
 {
     #[ORM\Id]
@@ -23,15 +28,18 @@ class Section
     private $slug;
 
 
-    #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'sections')]
+    #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'sections',cascade:['remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private $course;
 
-    // #[ORM\OneToMany(mappedBy: 'section', targetEntity: Lesson::class, orphanRemoval: true)]
-    #[ORM\OneToMany(mappedBy: 'section', targetEntity: Lesson::class)]
+    #[ORM\OneToMany(mappedBy: 'section', targetEntity: Lesson::class, orphanRemoval: true,cascade:['remove'])]
+    #[Assert\Unique]
+    #[Assert\Count(
+        min: 1,
+        minMessage: 'Il faut au moins une leçon',
+    )]
     private $lessons;
 
-    // #[ORM\OneToOne(mappedBy: 'section', targetEntity: Quiz::class, cascade: ['persist', 'remove'])]
     #[ORM\OneToOne(mappedBy: 'section', targetEntity: Quiz::class)]
     private $quiz;
 
@@ -50,7 +58,7 @@ class Section
     {
         $this->lessons = new ArrayCollection();
         $this->added_at = new \DateTimeImmutable();
-        $this->is_published = false;
+        $this->is_published = true;
     }
 
     

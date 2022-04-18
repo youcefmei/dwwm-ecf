@@ -7,8 +7,14 @@ use App\Repository\LessonRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: LessonRepository::class)]
+#[ORM\UniqueConstraint(
+    name: 'section_title_idx',
+    columns: ['title', 'section_id']
+)]
 class Lesson
 {
     #[ORM\Id]
@@ -17,6 +23,7 @@ class Lesson
     private $id;
 
     #[ORM\Column(type: 'text')]
+    #[NotBlank(message:'Veuillez entrer du texte')]
     private $content;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -25,20 +32,22 @@ class Lesson
     #[ORM\Column(type: 'datetime_immutable')]
     private $update_at;
 
-    #[ORM\Column(type: 'boolean', options: ["default" => false])]
+    #[ORM\Column(type: 'boolean', options: ["default" => true])]
     private $is_published;
 
-    #[ORM\ManyToOne(targetEntity: Section::class, inversedBy: 'lessons')]
+    #[ORM\ManyToOne(targetEntity: Section::class, inversedBy: 'lessons', cascade:['remove'])]
     #[ORM\JoinColumn(nullable: true)]
     private $section;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[NotBlank(message:'Veuillez entrer un titre')]
     private $title;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[NotBlank(message:'Veuillez entrer un lien')]
     private $media;
 
-    #[ORM\OneToMany(mappedBy: 'lesson', targetEntity: LessonStudent::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'lesson', targetEntity: LessonStudent::class)]
     private $lessonStudents;
 
     #[ORM\ManyToOne(targetEntity: Teacher::class, inversedBy: 'lessons')]
@@ -64,9 +73,9 @@ class Lesson
         return $this->content;
     }
 
-    public function setContent(string $content): self
+    public function setContent(string $content=null): self
     {
-        $this->content = $content;
+        $this->content =  $content ? $content:"" ;
         $this->update_at = new \DateTimeImmutable();
         return $this;
     }
@@ -126,8 +135,8 @@ class Lesson
     public function setTitle(string $title): self
     {
         $this->title = $title;
-        if(!$this->slug){
-            $this->slug= (new AsciiSlugger())->slug($title);
+        if (!$this->slug) {
+            $this->slug = (new AsciiSlugger())->slug($title);
         }
 
         return $this;
@@ -186,8 +195,4 @@ class Lesson
 
         return $this;
     }
-
-
-
-
 }

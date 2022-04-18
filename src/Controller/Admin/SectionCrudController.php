@@ -105,7 +105,7 @@ class SectionCrudController extends AbstractCrudController
         yield DateField::new('addedAt', 'Date d\'ajout')
         ->onlyOnIndex();
             // yield AssociationField::new('course', 'Formation');
-            // yield BooleanField::new('is_published', label: "Publier la section ?");
+        yield BooleanField::new('is_published', label: "Publier la section ?");
             // yield CollectionField::new("lessons","Leçons")->setEntryType(LessonType::class)
 
 
@@ -142,6 +142,7 @@ class SectionCrudController extends AbstractCrudController
     {
         /** @var Section $section */
         $section = $this->entityCommon($entityManager,$entityInstance);
+        $section->setSlug((new AsciiSlugger())->slug($section->getTitle())) ;
         parent::persistEntity($entityManager, $section);
     }
 
